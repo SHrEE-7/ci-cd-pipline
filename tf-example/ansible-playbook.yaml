@@ -1,0 +1,28 @@
+---
+- hosts: all
+  tasks:
+    - name: wait for ssh connection
+      wait_for:
+        port: 22
+        delay: 10
+        timout: 100
+        search_regex: OpenSSH
+        host: "{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}"
+        # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/wait_for_module.html
+      vars:
+        ansible_connection: local
+
+    - name: Install Docker
+      become: yes   # bydefault it will be a root user
+      become_user: root # you can explicitly mention to become root user
+      vars:
+        ansible_python_interpreter: /usr/bin/python
+      yum:
+        name: docker
+        update_cache: yes
+        state: present 
+    - name: Install docker python module
+      become: yes
+      pip:
+        name:
+          - docker
