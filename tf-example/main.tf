@@ -82,12 +82,12 @@ resource "aws_default_security_group" "default_sg" {
 }
 
 # Select Instance Type  
-data "aws_ami" "latest_amazon_ami_image" {
+data "aws_ami" "redhat_image" {
   most_recent = true
   owners      = ["amazon"]
   filter {
     name   = "name"
-    values = ["amzn2-ami-kernel-*-x86_64-gp2"]
+    values = ["RHEL-9.3.0_HVM-20231101-x86_64-5-Hourly2-GP2"]
   }
   # filter {
   #   name = "Virtualization"
@@ -97,7 +97,7 @@ data "aws_ami" "latest_amazon_ami_image" {
 
 # Launch Selected instance with configuration
 resource "aws_instance" "myapp_server" {
-  ami           = data.aws_ami.latest_amazon_ami_image.id
+  ami           = data.aws_ami.redhat_image.id
   instance_type = var.instance_type
 
   subnet_id              = aws_subnet.myapp_subnet_1.id
@@ -117,15 +117,6 @@ resource "null_resource" "configure_server" {
   triggers = {
     "trigger" = "aws_instance.myapp_server.public_ip"
   }
-  # provisioner "local-exec" {
-  #   command = "ansible-playbook --inventory ${aws_instance.myapp_server.public_ip},  --private-key ${var.ssh_private_key} --user ec2-user ansible-playbook.yaml"
-  # }
-  # provisioner "local-exec" {
-  #   command = <<-EOT
-  #     ssh-keyscan -H ${aws_instance.myapp_server.public_ip} >> ~/.ssh/known_hosts &&
-  #     ansible-playbook --inventory ${aws_instance.myapp_server.public_ip}, --private-key ${var.ssh_private_key} --user ec2-user ansible-playbook.yaml
-  #   EOT
-  # }
   provisioner "local-exec" {
     command = <<-EOT
     mkdir -p $HOME/.ssh &&
