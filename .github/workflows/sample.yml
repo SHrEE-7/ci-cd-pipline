@@ -1,0 +1,8 @@
+name: install necessary packages
+on: workflow_dispatch
+jobs:
+  install-packages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: install docker
+        run: sudo apt update && sudo apt install docker.io -y
