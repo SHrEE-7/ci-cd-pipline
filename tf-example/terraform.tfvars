@@ -1,6 +1,6 @@
 env_prefix = "dev"
 vpc_cider_block = "10.0.0.0/16"
 subnet_cider_block = "10.0.10.0/24"
-avail_zone = "ap-south-1"
+avail_zone = "ap-south-1a"
 instance_type = "t2.micro"
 ssh_private_key = "/home/shreefutane/Documents/app-ssh-key.pem"
