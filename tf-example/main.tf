@@ -117,7 +117,13 @@ resource "null_resource" "configure_server" {
   triggers = {
     "trigger" = "aws_instance.myapp_server.public_ip"
   }
+  # provisioner "local-exec" {
+  #   command = "ansible-playbook --inventory ${aws_instance.myapp_server.public_ip},  --private-key ${var.ssh_private_key} --user ec2-user ansible-playbook.yaml"
+  # }
   provisioner "local-exec" {
-    command = "ansible-playbook --inventory ${aws_instance.myapp_server.public_ip}, --private-key ${var.ssh_private_key} --user ec2-user ansible-playbook.yaml"
+    command = <<-EOT
+      ssh-keyscan -H ${aws_instance.myapp_server.public_ip} >> ~/.ssh/known_hosts &&
+      ansible-playbook --inventory ${aws_instance.myapp_server.public_ip}, --private-key ${var.ssh_private_key} --user ec2-user ansible-playbook.yaml
+    EOT
   }
 }
