@@ -11,16 +11,19 @@
         # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/wait_for_module.html
       vars:
         ansible_connection: local
+        ansible_python_interpreter: /usr/bin/python
 
-    - name: Install Docker
+    - name: Install Docker and python3
       become: yes   # bydefault it will be a root user
       become_user: root # you can explicitly mention to become root user
       vars:
-        ansible_python_interpreter: /usr/bin/python3
+        ansible_python_interpreter: /usr/bin/python
       yum:
-        name: docker
+        name: 
+          - python3
+          - docker
         update_cache: yes
-        state: present 
+        state: present
     - name: Install docker python module
       become: yes
       pip:
