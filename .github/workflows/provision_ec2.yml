@@ -15,8 +15,8 @@ jobs:
           aws-region: ap-south-1
       - name: install ansible
         run: |
-          sudo yum update
-          sudo yum install ansible-core -y
+          sudo apt update
+          sudo apt install ansible -y
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
