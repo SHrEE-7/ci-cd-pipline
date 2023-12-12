@@ -87,7 +87,7 @@ data "aws_ami" "redhat_image" {
   owners      = ["amazon"]
   filter {
     name   = "name"
-    values = ["RHEL-9.3.0_HVM-20231101-x86_64-5-Hourly2-GP2"]
+    values = ["amzn2-ami-kernel-*-x86_64-gp2"]
   }
   # filter {
   #   name = "Virtualization"
