@@ -124,6 +124,6 @@ resource "null_resource" "configure_server" {
     ssh-keyscan -H ${aws_instance.myapp_server.public_ip} >> $HOME/.ssh/known_hosts &&
     chmod 600 ${var.ssh_private_key} &&
     ansible-playbook --inventory ${aws_instance.myapp_server.public_ip}, --private-key ${var.ssh_private_key} --user ec2-user ansible-playbook.yaml
-  EOT
+    EOT
   }
 }
