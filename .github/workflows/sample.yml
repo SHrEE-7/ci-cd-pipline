@@ -5,4 +5,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: install docker
-        run: sudo apt update && sudo apt install docker.io -y
+        run: sudo apt update
+      - name: install 
+        run: sudo apt install docker -y
