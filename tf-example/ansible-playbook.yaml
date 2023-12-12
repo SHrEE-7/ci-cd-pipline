@@ -15,6 +15,8 @@
     - name: Install Docker
       become: yes   # bydefault it will be a root user
       become_user: root # you can explicitly mention to become root user
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
       yum:
         name: docker
         update_cache: yes
