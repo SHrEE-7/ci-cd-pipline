@@ -3,7 +3,7 @@ name: Remove t2.micro EC2
 on:
   workflow_dispatch:
 jobs:
-  provision-ec2:
+  remove-ec2:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
