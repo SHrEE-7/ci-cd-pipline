@@ -12,8 +12,8 @@ resource "aws_vpc" "myapp_vpc" {
 
 # Create Subnet in new VPC
 resource "aws_subnet" "myapp_subnet_1" {
-  vpc_id = aws_vpc.myapp_vpc.id
-  cidr_block = var.subnet_cider_block
+  vpc_id            = aws_vpc.myapp_vpc.id
+  cidr_block        = var.subnet_cider_block
   availability_zone = var.avail_zone
   tags = {
     "Name" = "${var.env_prefix}-subnet-1"
@@ -47,32 +47,32 @@ resource "aws_default_security_group" "default_sg" {
   vpc_id = aws_vpc.myapp_vpc.id
 
   ingress {
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]       //[var.my_ip]
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] //[var.my_ip]
   }
 
   ingress {
-  from_port = 80
-  to_port = 80
-  protocol = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
-  from_port = 8080
-  to_port = 8080
-  protocol = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
-  
+
 
   egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks     = ["0.0.0.0/0"]
     prefix_list_ids = []
   }
 
@@ -84,9 +84,9 @@ resource "aws_default_security_group" "default_sg" {
 # Select Instance Type  
 data "aws_ami" "latest_amazon_ami_image" {
   most_recent = true
-  owners = ["amazon"]
+  owners      = ["amazon"]
   filter {
-    name = "name"
+    name   = "name"
     values = ["amzn2-ami-kernel-*-x86_64-gp2"]
   }
   # filter {
@@ -97,15 +97,15 @@ data "aws_ami" "latest_amazon_ami_image" {
 
 # Launch Selected instance with configuration
 resource "aws_instance" "myapp_server" {
-  ami                    = data.aws_ami.latest_amazon_ami_image.id
-  instance_type          = var.instance_type
-  
+  ami           = data.aws_ami.latest_amazon_ami_image.id
+  instance_type = var.instance_type
+
   subnet_id              = aws_subnet.myapp_subnet_1.id
   vpc_security_group_ids = [aws_default_security_group.default_sg.id]
   availability_zone      = var.avail_zone
 
   associate_public_ip_address = true
-  key_name = "app-ssh-key"
+  key_name                    = "app-ssh-key"
 
   tags = {
     "Name" = "${var.env_prefix}-server"
@@ -126,11 +126,13 @@ resource "null_resource" "configure_server" {
   #     ansible-playbook --inventory ${aws_instance.myapp_server.public_ip}, --private-key ${var.ssh_private_key} --user ec2-user ansible-playbook.yaml
   #   EOT
   # }
-    provisioner "local-exec" {
+  provisioner "local-exec" {
     command = <<-EOT
-      mkdir -p $HOME/.ssh &&
-      ssh-keyscan -H ${aws_instance.myapp_server.public_ip} >> $HOME/.ssh/known_hosts &&
-      ansible-playbook --inventory ${aws_instance.myapp_server.public_ip}, --private-key ${var.ssh_private_key} --user ec2-user ansible-playbook.yaml
-    EOT
+    mkdir -p $HOME/.ssh &&
+    chmod 700 $HOME/.ssh &&
+    ssh-keyscan -H ${aws_instance.myapp_server.public_ip} >> $HOME/.ssh/known_hosts &&
+    chmod 600 ${var.ssh_private_key} &&
+    ansible-playbook --inventory ${aws_instance.myapp_server.public_ip}, --private-key ${var.ssh_private_key} --user ec2-user ansible-playbook.yaml
+  EOT
   }
 }
