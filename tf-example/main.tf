@@ -120,9 +120,16 @@ resource "null_resource" "configure_server" {
   # provisioner "local-exec" {
   #   command = "ansible-playbook --inventory ${aws_instance.myapp_server.public_ip},  --private-key ${var.ssh_private_key} --user ec2-user ansible-playbook.yaml"
   # }
-  provisioner "local-exec" {
+  # provisioner "local-exec" {
+  #   command = <<-EOT
+  #     ssh-keyscan -H ${aws_instance.myapp_server.public_ip} >> ~/.ssh/known_hosts &&
+  #     ansible-playbook --inventory ${aws_instance.myapp_server.public_ip}, --private-key ${var.ssh_private_key} --user ec2-user ansible-playbook.yaml
+  #   EOT
+  # }
+    provisioner "local-exec" {
     command = <<-EOT
-      ssh-keyscan -H ${aws_instance.myapp_server.public_ip} >> ~/.ssh/known_hosts &&
+      mkdir -p $HOME/.ssh &&
+      ssh-keyscan -H ${aws_instance.myapp_server.public_ip} >> $HOME/.ssh/known_hosts &&
       ansible-playbook --inventory ${aws_instance.myapp_server.public_ip}, --private-key ${var.ssh_private_key} --user ec2-user ansible-playbook.yaml
     EOT
   }
