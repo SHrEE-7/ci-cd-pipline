@@ -113,17 +113,16 @@ resource "aws_instance" "myapp_server" {
 }
 
 # Run ansible-playbook command.
-resource "null_resource" "configure_server" {
-  triggers = {
-    "trigger" = "aws_instance.myapp_server.public_ip"
-  }
-  provisioner "local-exec" {
-    command = <<-EOT
-    mkdir -p $HOME/.ssh &&
-    chmod 700 $HOME/.ssh &&
-    ssh-keyscan -H ${aws_instance.myapp_server.public_ip} >> $HOME/.ssh/known_hosts &&
-    chmod 600 ${var.ssh_private_key} &&
-    ansible-playbook --inventory ${aws_instance.myapp_server.public_ip}, --private-key ${var.ssh_private_key} --user ec2-user ansible-playbook.yaml
-    EOT
-  }
-}
+# resource "null_resource" "configure_server" {
+#   triggers = {
+#     "trigger" = "aws_instance.myapp_server.public_ip"
+#   }
+#   provisioner "local-exec" {
+#     command = <<-EOT
+#     mkdir -p $HOME/.ssh &&
+#     chmod 700 $HOME/.ssh &&
+#     ssh-keyscan -H ${aws_instance.myapp_server.public_ip} >> $HOME/.ssh/known_hosts &&
+#     chmod 600 ${var.ssh_private_key} &&
+#     ansible-playbook --inventory ${aws_instance.myapp_server.public_ip}, --private-key ${var.ssh_private_key} --user ec2-user ansible-playbook.yaml
+#     EOT
+#   }
