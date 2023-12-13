@@ -8,9 +8,9 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      EC2_HOST: ec2-user@13.233.107.255
+      EC2_HOST: ec2-user@13.233.174.60
     steps:
-    - name: set permission to private key and install docker
+    - name: set permission to private key
       run: |
         echo "${{ secrets.AWS_PRIVATE_KEY }}" > key.pem
         chmod 600 key.pem
