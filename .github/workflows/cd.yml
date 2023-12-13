@@ -14,8 +14,11 @@ jobs:
       run: |
         echo "${{ secrets.AWS_PRIVATE_KEY }}" > key.pem
         chmod 600 key.pem
-    - name: install docker
-      run: ssh -o StrictHostKeyChecking=no -i key.pem $EC2_HOST 'sudo amazon-linux-extras install docker -y'
+    - name: install docker and enable the docker service
+      run: |
+        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_HOST 'sudo amazon-linux-extras install docker -y'
+        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_HOST 'sudo systemctl reload docker'
+        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_HOST 'sudo systemctl enable docker'
     - name: Pull Docker image
       run: |
         ssh -o StrictHostKeyChecking=no -i key.pem $EC2_HOST 'sudo docker pull 07shree/cicd-pipeline:latest'
