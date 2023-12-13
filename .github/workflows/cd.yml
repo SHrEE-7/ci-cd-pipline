@@ -1,21 +1,28 @@
 name: CD Pipeline
 
-on:
-  workflow_run:
-    workflows: ["CI Pipeline"]
-    types:
-      - completed
+on: workflow_dispatch
 
 jobs:
 
-  build:
+  deploy:
 
-    runs-on: self-hosted
-
+    runs-on: ubuntu-latest
+    env:
+      EC2_HOST: ec2-user@
     steps:
+    - name: set permission to private key and install docker
+      run: |
+        echo "${{ secrets.AWS_PRIVATE_KEY }}" > key.pem
+        chmod 600 key.pem
+        sudo amazon-linux-extras install docker -y
+
     - name: Pull Docker image
-      run: sudo docker pull 07shree/cicd-pipeline:latest
+      run: |
+        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_HOST 'sudo docker pull 07shree/cicd-pipeline:latest'
     - name: Delete Old docker container
-      run: sudo docker rm -f cicd-pipeline-container || true
+      run: |
+        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_HOST 'sudo docker rm -f cicd-pipeline-container || true'
+      
     - name: Run Docker Container
-      run: sudo docker run -d -p 8080:8080 --name cicd-pipeline-container 07shree/cicd-pipeline
+      run: |
+        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_HOST 'sudo docker run -d -p 8080:8080 --name cicd-pipeline-container 07shree/cicd-pipeline'
