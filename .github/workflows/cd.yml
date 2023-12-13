@@ -17,7 +17,7 @@ jobs:
     - name: install docker and enable the docker service
       run: |
         ssh -o StrictHostKeyChecking=no -i key.pem $EC2_HOST 'sudo amazon-linux-extras install docker -y'
-        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_HOST 'sudo systemctl reload docker'
+        ssh -o StrictHostKeyChecking=no -i key.pem $EC2_HOST 'sudo systemctl restart docker'
         ssh -o StrictHostKeyChecking=no -i key.pem $EC2_HOST 'sudo systemctl enable docker'
     - name: Pull Docker image
       run: |
