@@ -8,14 +8,14 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      EC2_HOST: ec2-user@13.127.170.178
+      EC2_HOST: ec2-user@13.234.119.163
     steps:
     - name: set permission to private key and install docker
       run: |
         echo "${{ secrets.AWS_PRIVATE_KEY }}" > key.pem
         chmod 600 key.pem
-        sudo amazon-linux-extras install docker -y
-
+    - name: install docker
+      run: ssh -o StrictHostKeyChecking=no -i key.pem $EC2_HOST 'sudo amazon-linux-extras install docker -y'
     - name: Pull Docker image
       run: |
         ssh -o StrictHostKeyChecking=no -i key.pem $EC2_HOST 'sudo docker pull 07shree/cicd-pipeline:latest'
